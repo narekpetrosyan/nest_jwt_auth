@@ -1,0 +1,22 @@
+version: '3.9'
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    tty: true
+    container_name: db
+    environment:
+      MYSQL_HOST: db
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: goods
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    ports:
+      - '3306:3306'
+    volumes:
+      - dbdata:/var/lib/mysql/
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+
+volumes:
+  dbdata:
+    driver: local
