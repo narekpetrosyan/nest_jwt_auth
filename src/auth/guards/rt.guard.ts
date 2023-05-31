@@ -1,12 +1,15 @@
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { ExtractJwt } from 'passport-jwt';
 
+@Injectable()
 export class RtGuard extends AuthGuard('jwt-refresh') {
-  constructor() {
+  constructor(private configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_REFRESH_SECRET,
+      secretOrKey: configService.get<string>('JWT_REFRESH_SECRET'),
       passReqToCallback: true,
     });
   }

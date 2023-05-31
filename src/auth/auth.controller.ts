@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import { GetCurrentUserId } from 'src/lib/decorators/get-user-id.decorator';
@@ -39,7 +30,6 @@ export class AuthController {
   @Public()
   @UseGuards(RtGuard)
   @Post('/refresh')
-  @HttpCode(HttpStatus.OK)
   async refreshTokens(
     @GetCurrentUser('refreshToken') refreshToken: string,
     @GetCurrentUserId() userId: number,
