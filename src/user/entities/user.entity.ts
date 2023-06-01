@@ -6,9 +6,9 @@ export class UserEntity extends BaseEntity {
   @Column({ name: 'username', unique: true })
   username: string;
 
-  @Column({ name: 'password' })
+  @Column({ name: 'password', select: false })
   password: string;
 
-  @Column({ name: 'refresh_token', nullable: true })
+  @Column({ name: 'refresh_token', nullable: true, select: false })
   refresh_token: string;
 }

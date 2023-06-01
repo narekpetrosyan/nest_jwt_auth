@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import { GetCurrentUserId } from 'src/lib/decorators/get-user-id.decorator';
@@ -12,6 +12,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/user/dto/createUser.dto';
+import { AuthResponseDto, UserResponseDto } from './dto/response.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -20,6 +21,7 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Register a user' })
   @ApiResponse({
+    type: AuthResponseDto,
     description: 'Returns access and refresh tokens',
   })
   @Public()
@@ -30,6 +32,7 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Login' })
   @ApiResponse({
+    type: AuthResponseDto,
     description: 'Returns access and refresh tokens',
   })
   @Public()
@@ -46,11 +49,12 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Refresh access token' })
   @ApiResponse({
+    type: AuthResponseDto,
     description: 'Returns refreshed access token and refresh token',
   })
   @Public()
   @UseGuards(RtGuard)
-  @Post('/refresh')
+  @Post('refresh')
   async refreshTokens(
     @GetCurrentUser('refreshToken') refreshToken: string,
     @GetCurrentUserId() userId: number,
@@ -58,9 +62,14 @@ export class AuthController {
     return await this.authService.refreshTokens(userId, refreshToken);
   }
 
+  @ApiOperation({ summary: 'Get information about user' })
+  @ApiResponse({
+    type: UserResponseDto,
+    description: 'Returns an object containing information about user',
+  })
   @ApiBearerAuth('jwt-auth')
-  @Get('profile')
-  profile(@Req() req) {
-    return req.user;
+  @Get('me')
+  async me(@GetCurrentUserId() userId: number) {
+    return await this.authService.getMe(userId);
   }
 }
