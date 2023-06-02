@@ -16,8 +16,8 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
+
   async register(createUserDto: Record<string, any>): Promise<any> {
-    // Check if user exists
     const userExists = await this.userService.findByUsername(
       createUserDto.username,
     );
@@ -25,7 +25,6 @@ export class AuthService {
       throw new BadRequestException('User already exists');
     }
 
-    // Hash password
     const hash = await this.hashData(createUserDto.password);
     const newUser = await this.userService.create(createUserDto.username, hash);
     const tokens = await this.getTokens(newUser.id, newUser.username);
@@ -49,8 +48,8 @@ export class AuthService {
     return this.userService.update(userId, { refreshToken: null });
   }
 
-  async hashData(data: string) {
-    return await bcrypt.hash(data, 10);
+  async getMe(userId: number) {
+    return await this.userService.findOne(userId);
   }
 
   async updateRefreshToken(userId: number, refreshToken: string) {
@@ -106,5 +105,9 @@ export class AuthService {
       accessToken,
       refreshToken,
     };
+  }
+
+  private async hashData(data: string) {
+    return await bcrypt.hash(data, 10);
   }
 }
